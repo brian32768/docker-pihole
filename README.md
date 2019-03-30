@@ -10,6 +10,15 @@ More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole
     docker volume create pihole-dnsmasq
     docker-compose up
 
+## Hostnames
+
+Outside my network, names are served in Cloudflare.
+I use the same domain inside my network (wildsong.biz) so that things line up nicely
+whether I am at work or at home.
+
+To resolve names correctly inside my network, I mount a volume "pihole_dnsmasq"
+and maintain a file wildsong.conf.
+
 ## Proxy
 
 I run this container behind a reverse proxy.
