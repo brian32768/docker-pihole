@@ -1,0 +1,57 @@
+version: "3.7"
+services:
+  pihole:
+    # Runs a DNS server to blackhole advertising
+    # It has a management interface running on port 80,
+    # so we want to proxy it.
+    # We are NOT running DHCP so port 67 is not exposed.
+    container_name: pihole
+    depends_on:
+      - proxy
+    image: pihole/pihole:latest
+    networks:
+      - proxy_net
+    expose:
+      - "80"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "443:443/tcp"  # catches ads on port 443 or so they say
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+#    cap_add:
+#      - NET_ADMIN
+    environment:
+      VIRTUAL_HOST: "pihole.wildsong.biz"
+      TZ: 'America/LosAngeles'
+      WEBPASSWORD: thalweg
+      ServerIP: "192.168.123.2"
+      # Cloudflare
+      DNS1: "1.1.1.1"
+      DNS2: "1.0.0.1"
+      NETWORK_ACCESS: internal
+    dns:
+      - "1.1.1.1"
+      - "1.0.0.1"
+    volumes:
+       - type: volume
+         source: pihole_etc
+         target: /etc/pihole/
+       - type: volume
+         source: pihole_dnsmasq
+         target: /etc/dnsmasq.d/
+    restart: unless-stopped
+
+volumes:
+    pihole_etc:
+      name: pihole_etc
+
+    pihole_dnsmasq:
+      name: pihole_dnsmasq
+
+    static_content:
+      name: proxy_static_content
+    
+networks:
+  proxy_net:
+    name: proxy_net
