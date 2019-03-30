@@ -6,8 +6,6 @@ services:
     # so we want to proxy it.
     # We are NOT running DHCP so port 67 is not exposed.
     container_name: pihole
-    depends_on:
-      - proxy
     image: pihole/pihole:latest
     networks:
       - proxy_net
